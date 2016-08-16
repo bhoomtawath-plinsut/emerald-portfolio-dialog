@@ -1,0 +1,7 @@
+bower_components/
+node_modules/
+.tmp/
+web/local-libs/
+dist/
+test/libs/
+test/report/

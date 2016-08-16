@@ -1,0 +1,203 @@
+<link rel="import" href="bower_components/uifr-app/uifr-app.html">
+<link rel="import" href="bower_components/coral-dialog/coral-dialog.html">
+<link rel="import" href="bower_components/coral-button/coral-button.html">
+<link rel="import" href="bower_components/coral-input/coral-input.html">
+<link rel="import" href="bower_components/coral-link/coral-link.html">
+<dom-module id="emerald-portfolio-dialog">
+  <template strip-whitespace>
+    <style>
+      .label-wrapper {
+        text-align: right;
+        width: 60px;
+        margin-right: 5px;
+      }
+
+      .input-row {
+        margin: 10px;
+      }
+
+      .col {
+        display: inline-block;
+        vertical-align: top;
+        margin: 0 7px;
+      }
+
+      coral-input {
+        width: 200px;
+      }
+
+      .required {
+        color: #FF982D;
+        font-size: 18px;
+        width: 10px;
+      }
+
+      .icon-wrapper {
+        border-radius: 50%;
+        margin: 0 10px;
+      }
+
+      .icon-wrapper.valid {
+        background-color: #33CC66;
+      }
+
+      .icon-wrapper.invalid {
+        background-color: red;
+      }
+
+      .icon-wrapper coral-icon {
+        color: rgba(21, 21, 22, 1);
+      }
+
+      .icon-wrapper coral-icon[theme=pearl] {
+        color: #ffffff;
+      }
+
+      .valid {
+        color: #33CC66;
+      }
+
+      .invalid {
+        color: red;
+      }
+
+      coral-button.custom-btn {
+        float: right;
+      }
+    </style>
+    <coral-dialog header="[[interpret.header]]" width="[[width]]" modal no-ok no-cancel>
+      <coral-dialog-content>
+        <div class="dialog-content-content-container">
+          <div class="input-row">
+            <div class="label-wrapper col">
+              <label>[[interpret.code]]</label>
+            </div>
+            <div class="col">
+              <span class="required">*</span>
+            </div>
+            <div class="col">
+              <coral-input placeholder="[[interpret.enterCode]]" value="{{code}}"></coral-input>
+            </div>
+            <div class="validation-result col">
+              <span class$="icon-wrapper [[_nameResult.state]]">
+                <coral-icon id="codeIcon" icon="[[_codeResult.icon]]"></coral-icon>
+              </span>
+              <span name="codeMessage" class$="[[_codeResult.state]]">[[_codeResult.message]]</span>
+            </div>
+          </div>
+          <div class="input-row">
+            <div class="label-wrapper col">
+              <label>[[interpret.name]]</label>
+            </div>
+            <div class="col">
+              <span class="required">*</span>
+            </div>
+            <div class="col">
+              <coral-input placeholder="[[interpret.enterName]]" value="{{name}}"></coral-input>
+              <div><coral-link>[[interpret.needHelp]]</coral-link></div>
+            </div>
+            <div class="validation-result col">
+              <span class$="icon-wrapper [[_nameResult.state]]">
+                <coral-icon id="nameIcon" icon="_nameResult.icon"></coral-icon>
+              </span>
+              <span id="nameMessage" class$="[[_nameResult.state]]">[[_nameResult.message]]</span>
+            </div>
+          </div>
+        </div>
+      </coral-dialog-content>
+      <coral-dialog-cta>
+        <coral-button cta class="custom-btn create-portfolio-btn">[[interpret.createPortfolio]]</coral-button>
+        <coral-button class="custom-btn" on-click="hide">[[interpret.cancel]]</coral-button>
+      </coral-dialog-cta>
+    </coral-dialog>
+  </template>
+  <script>
+    Polymer({
+      is: 'emerald-portfolio-dialog',
+      properties: {
+        name: {
+          type: String,
+          observer: '_validateName'
+        },
+        code: {
+          type: String,
+          observer: '_validateCode'
+        },
+        width: String,
+        _codeResult: {
+          type: Object,
+          value: {
+            state: 'pristine',
+            message: ''
+          }
+        },
+        _nameResult: {
+          type: Object,
+          value: {
+            state: 'pristine',
+            message: ''
+          }
+        },
+        _states: {
+          type: Object,
+          value: {
+            PRISTINE: 'pristine',
+            DIRTY: 'dirty',
+            VALID: 'valid',
+            INVALID: 'invalid'
+          }
+        }
+      },
+      localization: {
+        'en-US': {
+          header: 'New Portfolio',
+          code: 'Code',
+          name: 'Name',
+          valid: 'Valid',
+          invalid: 'Invalid',
+          createPortfolio: 'Create Portfolio',
+          cancel: 'Cancel',
+          enterCode: 'Enter Code',
+          enterName: 'Enter Name',
+          needHelp: 'Need help with naming?'
+        }
+      },
+      _validateCode: function (newVal) {
+        if (this._codeIcon == null) {
+          this._codeIcon = this.$$('#codeIcon');
+        }
+        this._changeValidationStatus(newVal, this._codeIcon, '_codeResult');
+      },
+      _validateName: function (newVal) {
+        if (this._nameIcon == null) {
+          this._nameIcon = this.$$('#nameIcon');
+        }
+        this._changeValidationStatus(newVal, this._nameIcon, '_nameResult');
+      },
+      _changeValidationStatus: function (state, icon, resultPath) {
+        if (state === this._states.INVALID) {
+          icon.icon = 'cross-2';
+          this.set(resultPath + '.message', this.interpret.invalid);
+          this.set(resultPath + '.state', this._states.INVALID);
+        } else if (state === this._states.VALID) {
+          icon.icon = 'tick';
+          this.set(resultPath + '.message', this.interpret.valid);
+          this.set(resultPath + '.state', this._states.VALID);
+        } else {
+          icon.icon = null;
+          this.set(resultPath + '.message', null);
+          this.set(resultPath + '.state', null);
+        }
+      },
+      hide: function () {
+        this._dialog.hide();
+      },
+      show: function () {
+        this._dialog.show();
+      },
+      ready: function () {
+        this._dialog = this.$$('coral-dialog');
+      }
+    });
+  </script>
+</dom-module>

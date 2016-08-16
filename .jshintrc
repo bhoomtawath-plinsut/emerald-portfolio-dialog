@@ -1,0 +1,43 @@
+{
+    // Enforcing
+    "curly": true,
+    "eqeqeq": true,
+    "immed": true,
+    "latedef": "nofunc",
+    "noarg": true,
+    "nonew": true,
+    "newcap": false,
+    "quotmark": "single",
+    "undef": true,
+    "unused": "vars",
+    "trailing": false,
+    "white": true,
+    "indent": 2,
+    "noempty": true,
+
+    // Relaxing
+    "sub": true,
+    "eqnull": true,
+    "multistr": true,
+
+    // Environment
+    "browser": true,
+    "node": true,
+
+    "globals": {
+        "_": true,
+        "$": false,
+        "angular": false,
+        "moment": false,
+        "d3": false,
+        "tr": false,
+        "JET": false,
+        "Highcharts": false,
+        "TRWebchart_Twitter": false,
+        "TRWebchart_Fin": false,
+        "TRWebchart_Shared": false,
+        "Polymer": false,
+        "UIFR": true,
+        "is": false
+    }
+}

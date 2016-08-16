@@ -1,0 +1,57 @@
+{
+  "name": "portfolio-management-dialog",
+  "authors": [
+    "Thomson Reuters Eikon"
+  ],
+  "description": "A Portfolio Management Dialog",
+  "keywords": [
+    "web component",
+    "polymer",
+    "jet",
+    "thomson reuters",
+    "eikon",
+    "seed"
+  ],
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "main": "emerald-portfolio-dialog.html",
+  "license": "Apache-2.0",
+  "ignore": [
+    "/.gitignore",
+    "/test/",
+    "package.json",
+    "Grunfile.js"
+  ],
+  "dependencies": {
+    "uifr-app": "*",
+    "coral-dialog": "^1.0.26",
+    "coral-input": "^1.0.38",
+    "coral-link": "^1.0.19"
+  },
+  "devDependencies": {
+    "uifr-component-tester": "^1.0.0"
+  },
+  "x-meta": {
+    "released": true
+  },
+  "version": "0.0.1",
+  "_release": "0.0.1",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.0.1",
+    "commit": ""
+  },
+  "_source": "",
+  "_target": "release",
+  "_originalSource": "",
+  "_direct": true
+}
