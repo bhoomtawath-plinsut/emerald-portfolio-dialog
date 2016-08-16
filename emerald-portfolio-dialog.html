@@ -79,8 +79,8 @@
               <coral-input placeholder="[[interpret.enterCode]]" value="{{code}}"></coral-input>
             </div>
             <div class="validation-result col">
-              <span class$="icon-wrapper [[_nameResult.state]]">
-                <coral-icon id="codeIcon" icon="[[_codeResult.icon]]"></coral-icon>
+              <span class$="icon-wrapper [[_codeResult.state]]">
+                <coral-icon id="codeIcon" icon="_codeResult.icon"></coral-icon>
               </span>
               <span name="codeMessage" class$="[[_codeResult.state]]">[[_codeResult.message]]</span>
             </div>
@@ -106,7 +106,7 @@
         </div>
       </coral-dialog-content>
       <coral-dialog-cta>
-        <coral-button cta class="custom-btn create-portfolio-btn">[[interpret.createPortfolio]]</coral-button>
+        <coral-button id="createBtn" cta class="custom-btn create-portfolio-btn" disabled$="{{_createBtnDisabled}}">[[interpret.createPortfolio]]</coral-button>
         <coral-button class="custom-btn" on-click="hide">[[interpret.cancel]]</coral-button>
       </coral-dialog-cta>
     </coral-dialog>
@@ -138,6 +138,7 @@
             message: ''
           }
         },
+        _createBtnDisabled: Boolean,
         _states: {
           type: Object,
           value: {
@@ -166,13 +167,20 @@
         if (this._codeIcon == null) {
           this._codeIcon = this.$$('#codeIcon');
         }
-        this._changeValidationStatus(newVal, this._codeIcon, '_codeResult');
+        this._changeValidationStatus(this._getState(newVal), this._codeIcon, '_codeResult');
+        this._togglePortfolioBtn(this._states, this._codeResult, this._nameResult);
       },
       _validateName: function (newVal) {
         if (this._nameIcon == null) {
           this._nameIcon = this.$$('#nameIcon');
         }
-        this._changeValidationStatus(newVal, this._nameIcon, '_nameResult');
+        this._changeValidationStatus(this._getState(newVal), this._nameIcon, '_nameResult');
+        this._togglePortfolioBtn(this._states, this._codeResult, this._nameResult);
+      },
+      _getState: function (value) {
+        if (value != null && value.length > 0) {
+          return this._states.VALID;
+        }
       },
       _changeValidationStatus: function (state, icon, resultPath) {
         if (state === this._states.INVALID) {
@@ -187,6 +195,13 @@
           icon.icon = null;
           this.set(resultPath + '.message', null);
           this.set(resultPath + '.state', null);
+        }
+      },
+      _togglePortfolioBtn: function (_states, _codeResult, _nameResult) {
+        if (_codeResult.state === _states.VALID && _nameResult.state === _states.VALID) {
+          this._createBtnDisabled = false
+        } else {
+          this._createBtnDisabled = true;
         }
       },
       hide: function () {
