@@ -12,19 +12,10 @@
     "eikon",
     "seed"
   ],
-  "main": "",
-  "license": "MIT",
-  "homepage": "",
-  "private": true,
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
   "main": "emerald-portfolio-dialog.html",
   "license": "Apache-2.0",
+  "homepage": "",
+  "private": true,
   "ignore": [
     "/.gitignore",
     "/test/",
@@ -35,7 +26,9 @@
     "uifr-app": "*",
     "coral-dialog": "^1.0.26",
     "coral-input": "^1.0.38",
-    "coral-link": "^1.0.19"
+    "coral-link": "^1.0.19",
+    "iron-ajax": "^1.4.3",
+    "jet-app": "^2.0.59"
   },
   "devDependencies": {
     "uifr-component-tester": "^1.0.0"

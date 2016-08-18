@@ -1,8 +1,10 @@
+<link rel="import" href="bower_components/jet-app/jet-app.html">
 <link rel="import" href="bower_components/uifr-app/uifr-app.html">
 <link rel="import" href="bower_components/coral-dialog/coral-dialog.html">
 <link rel="import" href="bower_components/coral-button/coral-button.html">
 <link rel="import" href="bower_components/coral-input/coral-input.html">
 <link rel="import" href="bower_components/coral-link/coral-link.html">
+<link rel="import" href="bower_components/iron-ajax/iron-ajax.html">
 <dom-module id="emerald-portfolio-dialog">
   <template strip-whitespace>
     <style>
@@ -64,10 +66,21 @@
       coral-button.custom-btn {
         float: right;
       }
+
+      .result {
+        text-align: center;
+      }
     </style>
     <coral-dialog header="[[interpret.header]]" width="[[width]]" modal no-ok no-cancel>
       <coral-dialog-content>
+        <iron-ajax id="ironAjax" method="POST" url="/Apps/LunaProxy/CreatePortfolio" content-type="application/json" handle-as="json"
+                   body="{{_portfolioBody}}" headers="{'X-TRACS-UserId': 'PADACT-167'}" last-response="{{response}}" last-error="{{error}}"></iron-ajax>
         <div class="dialog-content-content-container">
+          <div class="input-row">
+            <div class$="col  [[_resultState]]">
+              [[_resultMessage]]
+            </div>
+          </div>
           <div class="input-row">
             <div class="label-wrapper col">
               <label>[[interpret.code]]</label>
@@ -106,7 +119,8 @@
         </div>
       </coral-dialog-content>
       <coral-dialog-cta>
-        <coral-button id="createBtn" cta class="custom-btn create-portfolio-btn" disabled$="{{_createBtnDisabled}}">[[interpret.createPortfolio]]</coral-button>
+        <coral-button id="createBtn" cta class="custom-btn create-portfolio-btn" disabled$="{{_createBtnDisabled}}"
+          on-click="_createPortfolio">[[interpret.createPortfolio]]</coral-button>
         <coral-button class="custom-btn" on-click="hide">[[interpret.cancel]]</coral-button>
       </coral-dialog-cta>
     </coral-dialog>
@@ -124,6 +138,27 @@
           observer: '_validateCode'
         },
         width: String,
+        _states: {
+          type: Object,
+          value: {
+            PRISTINE: 'pristine',
+            DIRTY: 'dirty',
+            VALID: 'valid',
+            INVALID: 'invalid'
+          }
+        },
+        response: {
+          type: Object,
+          observer: '_onResponse',
+          value: null
+        },
+        error: {
+          type: Object,
+          observer: '_onError',
+          value: null
+        },
+        _resultState: String,
+        _resultMessage: String,
         _codeResult: {
           type: Object,
           value: {
@@ -139,15 +174,7 @@
           }
         },
         _createBtnDisabled: Boolean,
-        _states: {
-          type: Object,
-          value: {
-            PRISTINE: 'pristine',
-            DIRTY: 'dirty',
-            VALID: 'valid',
-            INVALID: 'invalid'
-          }
-        }
+        _portfolioBody: Object
       },
       localization: {
         'en-US': {
@@ -160,7 +187,9 @@
           cancel: 'Cancel',
           enterCode: 'Enter Code',
           enterName: 'Enter Name',
-          needHelp: 'Need help with naming?'
+          needHelp: 'Need help with naming?',
+          createSuccess: 'Portfolio is created successfully',
+          createError: 'Fail to create portfolio'
         }
       },
       _validateCode: function (newVal) {
@@ -204,6 +233,46 @@
           this._createBtnDisabled = true;
         }
       },
+      _createPortfolio: function () {
+        this._portfolioBody = {
+          Name: this.name,
+          ShortName: this.code,
+          IsValid: true,
+          PortfolioId: 0,
+          FloatingRateCombinations: [],
+          PortfolioPLRule: {
+            AmortizationFRN: 0,
+            AmortizationMethod: 0,
+            AmortizationOEB: 0,
+            BondFutureDeals: 0,
+            FairPricing: true,
+            InventoryMethod: 0,
+            T1CashbondDeals: 0
+          },
+          ResourcePermission: {
+            IsOwner: true,
+            IsSharedToLocation: false,
+            SharedGroups: []
+          },
+          PortfolioGroupId: 0
+        };
+
+        this._ironAjax.generateRequest();
+      },
+      _onResponse: function () {
+        if (this.response != null) {
+          this._resultMessage = this.interpret.createSuccess;
+          this._resultState = this._states.VALID;
+        }
+        this.fire('response', this.response);
+      },
+      _onError: function () {
+        if (this.error != null) {
+          this._resultMessage = this.interpret.createError;
+          this._resultState = this._states.INVALID;
+        }
+        this.fire('error', this.error);
+      },
       hide: function () {
         this._dialog.hide();
       },
@@ -212,6 +281,8 @@
       },
       ready: function () {
         this._dialog = this.$$('coral-dialog');
+        this._ironAjax = this.$$('#ironAjax');
+        this._ironAjax.addEventListener('response', this._onResponse);
       }
     });
   </script>
