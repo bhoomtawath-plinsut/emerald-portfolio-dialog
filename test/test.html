@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="../bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <script src="../bower_components/web-component-tester/browser.js"></script>
+
+    <link rel="import" href="../emerald-portfolio-dialog.html">
+    <link rel="import" href="../bower_components/uifr-component-tester/uifr-component-tester.html">
+  </head>
+  <body is="uifr-app" theme="charcoal" unresolved>
+
+    <test-fixture id="basic">
+      <template>
+        <emerald-portfolio-dialog></emerald-portfolio-dialog>
+      </template>
+    </test-fixture>
+
+    <script type="text/javascript">
+      document.addEventListener('WebComponentsReady', function () {
+
+        describe('<emerald-portfolio-dialog>', function () {
+
+          var el;
+
+          afterEach(function () {
+            el.hide();
+          });
+
+          it('Contains correct structure', function () {
+            el = fixture('basic');
+            el.show();
+
+            assert.equal(el.querySelector('coral-dialog') !== null, true, 'coral-dialog exists inside the emerald-portfolio-dialog');
+          });
+
+          it('Displays correct header from attribute to dialog\'s header', function () {
+            el = fixture('basic');
+            el.show();
+
+            var coralDialogHeader = el._dialog.header;
+            var popupPanelText = el._dialog._panel.getPopup().querySelector('coral-panel.popup-dialog-header span').textContent.trim();
+
+            assert.equal(coralDialogHeader, popupPanelText, 'header attr equals to rendered header');
+          });
+
+        });
+      });
+    </script>
+  </body>
+</html>
