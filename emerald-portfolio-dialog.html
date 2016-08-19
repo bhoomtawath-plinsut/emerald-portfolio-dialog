@@ -235,11 +235,13 @@
           icon.icon = 'cross-2';
           this.set(resultPath + '.message', this.interpret.invalid);
           this.set(resultPath + '.state', this._states.INVALID);
-        } else if (state === this._states.VALID) {
+        }
+        else if (state === this._states.VALID) {
           icon.icon = 'tick';
           this.set(resultPath + '.message', this.interpret.valid);
           this.set(resultPath + '.state', this._states.VALID);
-        } else {
+        }
+        else {
           icon.icon = null;
           this.set(resultPath + '.message', null);
           this.set(resultPath + '.state', null);
@@ -248,7 +250,8 @@
       _togglePortfolioBtn: function (_codeResult, _nameResult) {
         if (_codeResult.state === this._states.VALID && _nameResult.state === this._states.VALID) {
           this._createBtnDisabled = false;
-        } else {
+        }
+        else {
           this._createBtnDisabled = true;
         }
       },
