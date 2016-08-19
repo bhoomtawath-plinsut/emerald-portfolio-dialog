@@ -1,0 +1,34 @@
+{
+  "name": "EmeraldPortfolioDialog",
+  "description": "EmeraldPortfolioDialog",
+  "version": "0.0.1",
+  "displayName": "EmeraldPortfolioDialog",
+  "defaultPlatform": "NodeJS",
+  "defaultPage": "demo/index.html",
+  "type": "WebApp",
+  "configurations": {
+  },
+  "datacenter_configurations": {
+    "dev": {
+      "tracs":"http://10.122.244.78/TRACSWeb/plugin.svc"
+    },
+    "alpha": {
+      "tracs":"http://tracs.icp2.cp.us1.reuintint.com/TRACSWeb/plugin.svc"
+    },
+    "ppe1": {
+      "tracs":"http://tracs.cp.ntc.reuppint.com/TRACSWeb/plugin.svc"
+    },
+    "ntcp": {
+      "tracs":"http://tracs.cp.ntc.reuint.com/TRACSWeb/plugin.svc"
+    },
+    "stcp": {
+      "tracs":"http://tracs.cp.stc.reuint.com/TRACSWeb/plugin.svc"
+    },
+    "dtcp": {
+      "tracs":"http://tracs.cp.dtc.reuint.com/TRACSWeb/plugin.svc"
+    },
+    "hdcp": {
+      "tracs":"http://tracs.cp.hdc.reuint.com/TRACSWeb/plugin.svc"
+    }
+  }
+}
