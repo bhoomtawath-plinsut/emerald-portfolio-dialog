@@ -56,11 +56,11 @@
       }
 
       .valid {
-        color: #33CC66;
+        color: #39c46e;
       }
 
       .invalid {
-        color: red;
+        color: #f5475b;
       }
 
       coral-button.custom-btn {
@@ -73,8 +73,10 @@
     </style>
     <coral-dialog header="[[interpret.header]]" width="[[width]]" modal no-ok no-cancel>
       <coral-dialog-content>
+        <iron-ajax id="validationAjax" method="POST" url="/Apps/LunaProxy/GetPortfoliosByCode" content-type="application/json" handle-as="json"
+                   body="{{_validationBody}}" last-response="{{_validationResponse}}" last-error="{{_validationError}}"></iron-ajax>
         <iron-ajax id="ironAjax" method="POST" url="/Apps/LunaProxy/CreatePortfolio" content-type="application/json" handle-as="json"
-                   body="{{_portfolioBody}}" headers="{'X-TRACS-UserId': 'PADACT-167'}" last-response="{{response}}" last-error="{{error}}"></iron-ajax>
+                   body="{{_portfolioBody}}" last-response="{{response}}" last-error="{{error}}"></iron-ajax>
         <div class="dialog-content-content-container">
           <div class="input-row">
             <div class$="col  [[_resultState]]">
@@ -107,7 +109,6 @@
             </div>
             <div class="col">
               <coral-input placeholder="[[interpret.enterName]]" value="{{name}}"></coral-input>
-              <div><coral-link>[[interpret.needHelp]]</coral-link></div>
             </div>
             <div class="validation-result col">
               <span class$="icon-wrapper [[_nameResult.state]]">
@@ -129,15 +130,6 @@
     Polymer({
       is: 'emerald-portfolio-dialog',
       properties: {
-        name: {
-          type: String,
-          observer: '_validateName'
-        },
-        code: {
-          type: String,
-          observer: '_validateCode'
-        },
-        width: String,
         _states: {
           type: Object,
           value: {
@@ -146,6 +138,18 @@
             VALID: 'valid',
             INVALID: 'invalid'
           }
+        },
+        name: {
+          type: String,
+          observer: '_validateName'
+        },
+        code: {
+          type: String,
+          observer: '_validateCode'
+        },
+        width: {
+          type: String,
+          value: 500
         },
         response: {
           type: Object,
@@ -156,6 +160,15 @@
           type: Object,
           observer: '_onError',
           value: null
+        },
+        _validationBody: Object,
+        _validationResponse: {
+          type: Object,
+          observer: '_onValidationResponse'
+        },
+        _validationError: {
+          type: Object,
+          observer: '_onValidationError'
         },
         _resultState: String,
         _resultMessage: String,
@@ -189,22 +202,28 @@
           enterName: 'Enter Name',
           needHelp: 'Need help with naming?',
           createSuccess: 'Portfolio is created successfully',
-          createError: 'Fail to create portfolio'
+          createError: 'Fail to create portfolio',
+          connectionError: 'Connection error'
         }
       },
       _validateCode: function (newVal) {
         if (this._codeIcon == null) {
           this._codeIcon = this.$$('#codeIcon');
         }
-        this._changeValidationStatus(this._getState(newVal), this._codeIcon, '_codeResult');
-        this._togglePortfolioBtn(this._states, this._codeResult, this._nameResult);
+
+        this._validationBody = {
+          PortfolioCode: this.code
+        };
+        if (newVal.length > 0) {
+          this._validationAjax.generateRequest();
+        }
       },
       _validateName: function (newVal) {
         if (this._nameIcon == null) {
           this._nameIcon = this.$$('#nameIcon');
         }
         this._changeValidationStatus(this._getState(newVal), this._nameIcon, '_nameResult');
-        this._togglePortfolioBtn(this._states, this._codeResult, this._nameResult);
+        this._togglePortfolioBtn(this._codeResult, this._nameResult);
       },
       _getState: function (value) {
         if (value != null && value.length > 0) {
@@ -226,9 +245,9 @@
           this.set(resultPath + '.state', null);
         }
       },
-      _togglePortfolioBtn: function (_states, _codeResult, _nameResult) {
-        if (_codeResult.state === _states.VALID && _nameResult.state === _states.VALID) {
-          this._createBtnDisabled = false
+      _togglePortfolioBtn: function (_codeResult, _nameResult) {
+        if (_codeResult.state === this._states.VALID && _nameResult.state === this._states.VALID) {
+          this._createBtnDisabled = false;
         } else {
           this._createBtnDisabled = true;
         }
@@ -273,6 +292,13 @@
         }
         this.fire('error', this.error);
       },
+      _onValidationResponse: function () {
+        if (this.code.length > 0 && this._validationResponse != null) {
+          var state = this._validationResponse.length > 0 ? this._states.INVALID : this._states.VALID;
+          this._changeValidationStatus(state, this._codeIcon, '_codeResult');
+          this._togglePortfolioBtn(this._codeResult, this._nameResult);
+        }
+      },
       hide: function () {
         this._dialog.hide();
       },
@@ -283,6 +309,7 @@
         this._dialog = this.$$('coral-dialog');
         this._ironAjax = this.$$('#ironAjax');
         this._ironAjax.addEventListener('response', this._onResponse);
+        this._validationAjax = this.$$('#validationAjax');
       }
     });
   </script>
